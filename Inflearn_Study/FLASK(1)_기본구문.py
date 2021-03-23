@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 class User(db.Model):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(64), nullable=False) #빈값 허용여부:nullable
     
-def __repr__(self):
+def __repr__(self): #sql검색 시, 해당 repr 설정값에 맞게 출력
     return '<User>' % self.id % self.username
