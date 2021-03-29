@@ -1,11 +1,10 @@
+
+from __init__ import db,abandonment
 from urllib.parse import quote_plus, urlencode
-from urllib.request import Request, urlopen, unquote # unquote 추가
+from urllib.request import Request, urlopen
 #pip install elementpath
 import xml.etree.ElementTree as ElementTree
-
-
-####################### api 생성 ##############################
-
+from urllib.parse import unquote
 
 def doAction():
     today_number = 0
@@ -13,9 +12,9 @@ def doAction():
     today_kind_cat = 0
     today_kind_others = 0
     
-    ServiceKey =unquote('API KEY')
+    ServiceKey =unquote('api')
 
-    for i in range(1,10):
+    for i in range(1000,10000):
         url = 'url'
         queryParams = '?' + urlencode({quote_plus('ServiceKey') : ServiceKey, quote_plus('pageNo'):'{}'.format(i)})
 
@@ -23,7 +22,7 @@ def doAction():
         request = Request(url + queryParams)
         request.get_method = lambda: 'GET'
         response_body = urlopen(request).read()
-        print (response_body)
+        #print (response_body)
 
         tree = ElementTree.ElementTree(ElementTree.fromstring(response_body))
         #print(tree)
@@ -34,19 +33,39 @@ def doAction():
         itemList = rootNode.getiterator('item')
         #print(itemList)
 
-        index = 0
         for x in itemList:
-            page_index = i
-            index += 1
-            noticeEdt = x.findtext('noticeEdt')
-            popfile = x.findtext('popfile')
+            desertionNo = x.findtext('desertionNo')
+            orgNm=x.findtext('orgNm')
 
-            if happenDt == datetime.datetime.today().strftime('%Y%m%d'):
-                today_number += 1
 
-                _kindCd_ = kindCd.split(']')[0].split('[')[1]
-                if _kindCd_ == '개': today_kind_dog += 1
-                if _kindCd_ == '고양이': today_kind_cat += 1
-                else: today_kind_others += 1
+            db_abandonment = abandonment.query.filter_by(desertionNo=desertionNo).first()
+            print(i)
+            if (db_abandonment is None) and (orgNm=='경기도'):
+                sexCd = x.findtext('sexCd')
+                processState = x.findtext('processState')
+                neuterYn = x.findtext('neuterYn')
+                specialMark = x.findtext('specialMark')
+                careNm = x.findtext('careNm')
+                happenDt=x.findtext('happenDt')
+                happenPlace=x.findtext('happenPlace')
+                kindCd=x.findtext('kindCd')
+                colorCd=x.findtext('colorCd')
+                age=x.findtext('age')
+                weight=x.findtext('weight')
+                noticeEdt=x.findtext('noticeEdt')
+                noticeSdt=x.findtext('noticeSdt')
 
-    return today_number, today_kind_dog, today_kind_cat, today_kind_others
+                _abandonment_ = abandonment(desertionNo=desertionNo,sexCd=sexCd,processState=processState,neuterYn=neuterYn,specialMark=specialMark,
+                careNm=careNm,orgNm=orgNm,happenDt=happenDt,happenPlace=happenPlace,kindCd=kindCd,colorCd=colorCd,age=age,weight=weight,noticeEdt=noticeEdt,noticeSdt=noticeSdt)
+           
+                db.session.add(_abandonment_)
+                db.session.commit()
+                print(noticeSdt)
+
+    return 100
+
+
+doAction()
+
+
+
