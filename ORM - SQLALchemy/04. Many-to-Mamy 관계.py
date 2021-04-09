@@ -6,7 +6,6 @@ app.config['SQLALCHEMY_DATABASE_URI']='postgresql://private'
 db=SQLAlchemy(app)
 
 #Role, Member, Project 생성
-
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     position = db.Column(db.String(50))
