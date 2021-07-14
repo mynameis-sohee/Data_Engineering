@@ -13,7 +13,6 @@
 ### 2. Scraping / API (데이터 수집)
 ### 3. FLASK (WepApp 개발)
 ### 4. SQLAlchemy (WepApp DB 연동)
-### 5. 빅데이터 처리 기술 (Hadoop, Kafka, Spark 등)
 
 
 &nbsp;
